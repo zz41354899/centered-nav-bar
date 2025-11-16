@@ -117,12 +117,12 @@ export const DynamicIslandNav = () => {
   return (
     <>
       <motion.nav
-        className="fixed top-6 left-0 right-0 z-50 flex justify-center"
+        className="fixed top-6 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 md:px-8"
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
-        <div className="relative">
+        <div className="relative w-full max-w-2xl">
           {/* Glass-morphism pill with neon green border */}
           <motion.div
             className="flex flex-col gap-0 rounded-3xl backdrop-blur-2xl bg-black/40 border border-white/20"
@@ -140,7 +140,7 @@ export const DynamicIslandNav = () => {
                   e.preventDefault();
                   handleNavClick("#hero");
                 }}
-                className="font-heading font-bold text-base sm:text-lg tracking-tight text-foreground hover:text-primary transition-colors whitespace-nowrap"
+                className="font-heading font-bold text-lg sm:text-lg tracking-tight text-foreground hover:text-primary transition-colors whitespace-nowrap"
               >
                 Portfolio
               </a>
@@ -204,7 +204,7 @@ export const DynamicIslandNav = () => {
             {/* Mobile Menu - Extends Below */}
             {isMobile && mobileMenuOpen && (
               <motion.div
-                className="flex flex-col gap-3 px-6 py-4 border-t border-white/10 rounded-b-3xl"
+                className="flex flex-col gap-3 px-8 py-4 border-t border-white/10 rounded-b-3xl"
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
@@ -219,8 +219,8 @@ export const DynamicIslandNav = () => {
                       handleNavClick(item.href);
                     }}
                     className={cn(
-                      "text-lg font-heading font-semibold transition-all duration-300 py-2",
-                      "hover:text-primary hover:scale-105",
+                      "text-lg font-heading font-semibold transition-all duration-300 py-2 px-4 rounded-lg",
+                      "hover:bg-white/20 hover:text-white hover:scale-105",
                       activeSection === item.href.slice(1) ? "text-primary" : "text-foreground"
                     )}
                     initial={{ opacity: 0, y: 20 }}
