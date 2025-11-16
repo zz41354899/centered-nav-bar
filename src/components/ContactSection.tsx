@@ -3,68 +3,47 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 import { motion } from "framer-motion";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),
   email: z.string().trim().email({ message: "Invalid email address" }).max(255, { message: "Email must be less than 255 characters" }),
-  message: z.string().trim().min(1, { message: "Message is required" }).max(1000, { message: "Message must be less than 1000 characters" })
+  message: z.string().trim().min(1, { message: "Message is required" }).max(1000, { message: "Message must be less than 1000 characters" }),
 });
+
+type ContactFormValues = z.infer<typeof contactSchema>;
 
 export const ContactSection = () => {
   const { ref, isVisible } = useScrollAnimation(0.2);
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactFormValues>({
+    resolver: zodResolver(contactSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      message: "",
+    },
   });
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    // Clear error when user types
-    if (errors[name]) {
-      setErrors(prev => ({ ...prev, [name]: "" }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrors({});
-
-    // Validate form data
-    try {
-      contactSchema.parse(formData);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        const newErrors: Record<string, string> = {};
-        error.errors.forEach(err => {
-          if (err.path[0]) {
-            newErrors[err.path[0] as string] = err.message;
-          }
-        });
-        setErrors(newErrors);
-        return;
-      }
-    }
-
-    setIsSubmitting(true);
-
+  const onSubmit = async (values: ContactFormValues) => {
     // Simulate form submission
-    setTimeout(() => {
-      toast({
-        title: "Message sent!",
-        description: "Thank you for reaching out. I'll get back to you soon.",
-      });
-      setFormData({ name: "", email: "", message: "" });
-      setIsSubmitting(false);
-    }, 1000);
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
+    toast({
+      title: "Message sent!",
+      description: "Thank you for reaching out. I'll get back to you soon.",
+    });
+
+    reset();
   };
 
   return (
@@ -75,10 +54,7 @@ export const ContactSection = () => {
     >
       <div className="max-w-2xl mx-auto">
         <motion.h2
-          className="font-heading font-bold mb-6 text-center"
-          style={{
-            fontSize: "clamp(2rem, 4vw, 3rem)",
-          }}
+          className="font-heading font-bold mb-6 text-center text-3xl sm:text-4xl md:text-5xl"
           initial={{ opacity: 0, y: -20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
@@ -95,7 +71,7 @@ export const ContactSection = () => {
         </motion.p>
 
         <motion.form
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onSubmit)}
           className="space-y-6"
           initial={{ opacity: 0, y: 20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
@@ -106,15 +82,14 @@ export const ContactSection = () => {
               type="text"
               name="name"
               placeholder="Your Name"
-              value={formData.name}
-              onChange={handleChange}
+              {...register("name")}
               className={cn(
                 "bg-secondary/50 border-border focus:border-primary h-12 text-foreground placeholder:text-muted-foreground",
                 errors.name && "border-destructive focus:border-destructive"
               )}
             />
             {errors.name && (
-              <p className="text-destructive text-sm mt-1">{errors.name}</p>
+              <p className="text-destructive text-sm mt-1">{errors.name.message}</p>
             )}
           </div>
 
@@ -123,15 +98,14 @@ export const ContactSection = () => {
               type="email"
               name="email"
               placeholder="Your Email"
-              value={formData.email}
-              onChange={handleChange}
+              {...register("email")}
               className={cn(
                 "bg-secondary/50 border-border focus:border-primary h-12 text-foreground placeholder:text-muted-foreground",
                 errors.email && "border-destructive focus:border-destructive"
               )}
             />
             {errors.email && (
-              <p className="text-destructive text-sm mt-1">{errors.email}</p>
+              <p className="text-destructive text-sm mt-1">{errors.email.message}</p>
             )}
           </div>
 
@@ -139,8 +113,7 @@ export const ContactSection = () => {
             <Textarea
               name="message"
               placeholder="Your Message"
-              value={formData.message}
-              onChange={handleChange}
+              {...register("message")}
               rows={6}
               className={cn(
                 "bg-secondary/50 border-border focus:border-primary text-foreground placeholder:text-muted-foreground resize-none",
@@ -148,7 +121,7 @@ export const ContactSection = () => {
               )}
             />
             {errors.message && (
-              <p className="text-destructive text-sm mt-1">{errors.message}</p>
+              <p className="text-destructive text-sm mt-1">{errors.message.message}</p>
             )}
           </div>
 
@@ -156,10 +129,7 @@ export const ContactSection = () => {
             type="submit"
             size="lg"
             disabled={isSubmitting}
-            className="w-full rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
-            style={{
-              boxShadow: "0 0 24px rgba(143, 255, 0, 0.3)",
-            }}
+            className="w-full rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed shadow-[0_0_24px_rgba(143,255,0,0.3)]"
           >
             {isSubmitting ? "Sending..." : "Send Message"}
           </Button>

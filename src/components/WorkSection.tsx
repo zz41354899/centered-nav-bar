@@ -73,10 +73,7 @@ export const WorkSection = () => {
     >
       <div className="max-w-6xl mx-auto">
         <motion.h2
-          className="font-heading font-bold mb-4 text-center"
-          style={{
-            fontSize: "clamp(2rem, 4vw, 3rem)",
-          }}
+          className="font-heading font-bold mb-4 text-center text-3xl sm:text-4xl md:text-5xl"
           initial={{ opacity: 0, y: -20 }}
           animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.6 }}
@@ -111,10 +108,7 @@ export const WorkSection = () => {
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-all duration-300" />
                   <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div
-                      className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center"
-                      style={{
-                        boxShadow: "0 0 24px rgba(143, 255, 0, 0.4)",
-                      }}
+                      className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center shadow-[0_0_24px_rgba(143,255,0,0.4)]"
                     >
                       <span className="text-primary text-2xl">→</span>
                     </div>

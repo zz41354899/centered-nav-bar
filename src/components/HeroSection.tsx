@@ -48,10 +48,7 @@ export const HeroSection = () => {
         }}
       >
         <h1
-          className="font-heading font-bold mb-6 leading-tight"
-          style={{
-            fontSize: "clamp(2rem, 6vw, 4rem)",
-          }}
+          className="font-heading font-bold mb-6 leading-tight text-3xl sm:text-4xl md:text-5xl"
         >
           Crafting Digital
           <br />
@@ -59,12 +56,7 @@ export const HeroSection = () => {
         </h1>
 
         <p
-          className="text-muted-foreground mb-12 leading-relaxed"
-          style={{
-            fontSize: "clamp(1rem, 2vw, 1.25rem)",
-            maxWidth: "720px",
-            margin: "0 auto 3rem",
-          }}
+          className="text-muted-foreground mb-12 leading-relaxed text-base sm:text-lg md:text-xl max-w-3xl mx-auto"
         >
           UI Designer specializing in minimalist aesthetics, fluid motion, and
           user-centered design principles.
@@ -73,10 +65,7 @@ export const HeroSection = () => {
         <div className="flex flex-wrap gap-4 justify-center w-full">
           <Button
             size="lg"
-            className="rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105 sm:w-auto w-full"
-            style={{
-              boxShadow: "0 0 24px rgba(143, 255, 0, 0.3)",
-            }}
+            className="rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105 sm:w-auto w-full shadow-[0_0_24px_rgba(143,255,0,0.3)]"
             onClick={() => {
               const element = document.getElementById("work");
               if (element) {

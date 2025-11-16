@@ -125,11 +125,7 @@ export const DynamicIslandNav = () => {
         <div className="relative w-full max-w-2xl">
           {/* Glass-morphism pill with neon green border */}
           <motion.div
-            className="flex flex-col gap-0 rounded-3xl backdrop-blur-2xl bg-black/40 border border-white/20"
-            style={{
-              boxShadow: "0 0 20px rgba(143, 255, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4)",
-              backdropFilter: "blur(16px)",
-            }}
+            className="flex flex-col gap-0 rounded-3xl border border-white/20 bg-black/40 backdrop-blur-2xl shadow-[0_0_20px_rgba(143,255,0,0.15),0_8px_32px_rgba(0,0,0,0.4)]"
           >
             {/* Top Navigation Bar */}
             <div className="flex items-center justify-between gap-4 sm:gap-8 px-8 sm:px-16 md:px-20 py-4 rounded-t-3xl border-b border-white/10">
@@ -171,25 +167,19 @@ export const DynamicIslandNav = () => {
                       handleNavClick(item.href);
                     }}
                     className={cn(
-                      "relative font-medium text-sm tracking-wide transition-all duration-200",
+                      "relative font-medium text-sm tracking-[0.05em] transition-all duration-200",
                       "hover:scale-105 hover:text-primary",
                       activeSection === item.href.slice(1)
                         ? "text-primary"
                         : "text-foreground"
                     )}
-                    style={{
-                      letterSpacing: "0.05em",
-                    }}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
                     {item.label}
                     {activeSection === item.href.slice(1) && (
                       <motion.div
-                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
-                        style={{
-                          boxShadow: "0 0 8px rgba(143, 255, 0, 0.6)",
-                        }}
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-primary shadow-[0_0_8px_rgba(143,255,0,0.6)]"
                         layoutId="underline"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
