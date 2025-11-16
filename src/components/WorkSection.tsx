@@ -1,4 +1,6 @@
 import { Card } from "@/components/ui/card";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { cn } from "@/lib/utils";
 
 const projects = [
   {
@@ -34,8 +36,17 @@ const projects = [
 ];
 
 export const WorkSection = () => {
+  const { ref, isVisible } = useScrollAnimation(0.2);
+
   return (
-    <section id="work" className="py-32 px-6">
+    <section
+      id="work"
+      ref={ref as React.RefObject<HTMLElement>}
+      className={cn(
+        "py-32 px-6 opacity-0 transition-all duration-1000",
+        isVisible && "opacity-100 animate-fade-in-up"
+      )}
+    >
       <div className="max-w-6xl mx-auto">
         <h2
           className="font-heading font-bold mb-4 text-center"
@@ -53,8 +64,12 @@ export const WorkSection = () => {
           {projects.map((project, index) => (
             <Card
               key={index}
-              className="group bg-card border-border hover:border-primary/30 transition-all duration-300 overflow-hidden cursor-pointer"
+              className={cn(
+                "group bg-card border-border hover:border-primary/30 transition-all duration-300 overflow-hidden cursor-pointer opacity-0",
+                isVisible && "animate-fade-in"
+              )}
               style={{
+                animationDelay: isVisible ? `${index * 100}ms` : "0ms",
                 transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
               }}
             >

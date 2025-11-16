@@ -1,6 +1,18 @@
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { cn } from "@/lib/utils";
+
 export const AboutSection = () => {
+  const { ref, isVisible } = useScrollAnimation(0.2);
+
   return (
-    <section id="about" className="py-32 px-6">
+    <section
+      id="about"
+      ref={ref as React.RefObject<HTMLElement>}
+      className={cn(
+        "py-32 px-6 opacity-0 transition-all duration-1000",
+        isVisible && "opacity-100 animate-fade-in-up"
+      )}
+    >
       <div className="max-w-3xl mx-auto">
         <h2
           className="font-heading font-bold mb-8 text-center"

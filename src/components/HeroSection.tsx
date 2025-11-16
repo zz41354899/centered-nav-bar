@@ -1,21 +1,52 @@
 import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
 
 export const HeroSection = () => {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Parallax effect: elements move at different speeds
+  const parallaxOffset = scrollY * 0.5;
+
   return (
     <section
       id="hero"
-      className="relative min-h-screen flex items-center justify-center px-6"
+      className="relative min-h-screen flex items-center justify-center px-6 overflow-hidden"
     >
-      {/* Subtle gradient overlay */}
+      {/* Parallax gradient overlay */}
       <div
-        className="absolute inset-0 opacity-30"
+        className="absolute inset-0 opacity-30 transition-transform duration-100"
         style={{
+          transform: `translateY(${parallaxOffset}px)`,
           background:
             "radial-gradient(circle at 50% 50%, rgba(143, 255, 0, 0.08) 0%, transparent 50%)",
         }}
       />
 
-      <div className="relative z-10 text-center max-w-4xl mx-auto">
+      {/* Secondary parallax layer */}
+      <div
+        className="absolute inset-0 opacity-20"
+        style={{
+          transform: `translateY(${parallaxOffset * 0.3}px)`,
+          background:
+            "radial-gradient(circle at 30% 70%, rgba(143, 255, 0, 0.05) 0%, transparent 40%)",
+        }}
+      />
+
+      <div
+        className="relative z-10 text-center max-w-4xl mx-auto animate-fade-in"
+        style={{
+          transform: `translateY(${parallaxOffset * -0.2}px)`,
+        }}
+      >
         <h1
           className="font-heading font-bold mb-6 leading-tight"
           style={{
