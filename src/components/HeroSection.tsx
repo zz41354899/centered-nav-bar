@@ -70,10 +70,10 @@ export const HeroSection = () => {
           user-centered design principles.
         </p>
 
-        <div className="flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-wrap gap-4 justify-center w-full">
           <Button
             size="lg"
-            className="rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105"
+            className="rounded-full px-8 py-6 bg-primary text-primary-foreground hover:bg-primary/90 font-medium transition-all duration-200 hover:scale-105 sm:w-auto w-full"
             style={{
               boxShadow: "0 0 24px rgba(143, 255, 0, 0.3)",
             }}
@@ -92,7 +92,7 @@ export const HeroSection = () => {
           <Button
             size="lg"
             variant="outline"
-            className="rounded-full px-8 py-6 border-white/12 text-foreground hover:bg-white/20 hover:text-white font-medium transition-all duration-200 hover:scale-105"
+            className="rounded-full px-8 py-6 border-white/12 text-foreground hover:bg-white/20 hover:text-white font-medium transition-all duration-200 hover:scale-105 sm:w-auto w-full"
             onClick={() => {
               const element = document.getElementById("contact");
               if (element) {
