@@ -1,5 +1,6 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -8,12 +9,14 @@ export const Footer = () => {
   return (
     <footer
       ref={ref as React.RefObject<HTMLElement>}
-      className={cn(
-        "py-12 px-6 border-t border-border opacity-0 transition-all duration-1000",
-        isVisible && "opacity-100 animate-fade-in"
-      )}
+      className="py-12 px-6 border-t border-border"
     >
-      <div className="max-w-6xl mx-auto">
+      <motion.div
+        className="max-w-6xl mx-auto"
+        initial={{ opacity: 0 }}
+        animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+        transition={{ duration: 0.6 }}
+      >
         <div className="flex flex-col md:flex-row justify-between items-center gap-6">
           <div className="text-muted-foreground text-sm">
             © {currentYear} Portfolio. All rights reserved.
@@ -31,7 +34,7 @@ export const Footer = () => {
             ))}
           </div>
         </div>
-      </div>
+      </motion.div>
     </footer>
   );
 };

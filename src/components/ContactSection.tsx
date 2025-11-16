@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
+import { motion } from "framer-motion";
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),
@@ -70,32 +71,36 @@ export const ContactSection = () => {
     <section
       id="contact"
       ref={ref as React.RefObject<HTMLElement>}
-      className={cn(
-        "py-32 px-6 opacity-0 transition-all duration-1000",
-        isVisible && "opacity-100 animate-fade-in-up"
-      )}
+      className="py-32 px-6"
     >
       <div className="max-w-2xl mx-auto">
-        <h2
+        <motion.h2
           className="font-heading font-bold mb-6 text-center"
           style={{
             fontSize: "clamp(2rem, 4vw, 3rem)",
           }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
         >
           Let's Work Together
-        </h2>
-
-        <p
-          className="text-muted-foreground mb-12 leading-relaxed text-center"
-          style={{
-            fontSize: "clamp(1rem, 1.5vw, 1.125rem)",
-          }}
+        </motion.h2>
+        <motion.p
+          className="text-muted-foreground text-center mb-12 max-w-xl mx-auto"
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
-          I'm currently available for freelance projects and collaborations.
-          Fill out the form below and I'll get back to you within 24 hours.
-        </p>
+          Have a project in mind? Let's collaborate and create something amazing together.
+        </motion.p>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <motion.form
+          onSubmit={handleSubmit}
+          className="space-y-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           <div>
             <Input
               type="text"
@@ -158,7 +163,7 @@ export const ContactSection = () => {
           >
             {isSubmitting ? "Sending..." : "Send Message"}
           </Button>
-        </form>
+        </motion.form>
       </div>
     </section>
   );

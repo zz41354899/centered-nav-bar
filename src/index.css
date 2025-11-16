@@ -1,3 +1,6 @@
+/* eslint-disable */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -52,9 +55,6 @@ All colors MUST be HSL.
   }
 }
 
-/* Import fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
-
 @layer base {
   * {
     @apply border-border;
@@ -71,5 +71,15 @@ All colors MUST be HSL.
   
   html {
     scroll-behavior: smooth;
+    scroll-padding-top: 100px;
+  }
+  
+  /* Ensure smooth scrolling for all browsers */
+  html {
+    overflow-x: hidden;
+  }
+  
+  body {
+    overflow-x: hidden;
   }
 }

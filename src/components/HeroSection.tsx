@@ -77,7 +77,15 @@ export const HeroSection = () => {
             style={{
               boxShadow: "0 0 24px rgba(143, 255, 0, 0.3)",
             }}
-            onClick={() => document.getElementById("work")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => {
+              const element = document.getElementById("work");
+              if (element) {
+                const offset = 100;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+              }
+            }}
           >
             View My Work
           </Button>
@@ -85,7 +93,15 @@ export const HeroSection = () => {
             size="lg"
             variant="outline"
             className="rounded-full px-8 py-6 border-white/12 text-foreground hover:bg-white/5 font-medium transition-all duration-200 hover:scale-105"
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => {
+              const element = document.getElementById("contact");
+              if (element) {
+                const offset = 100;
+                const elementPosition = element.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - offset;
+                window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+              }
+            }}
           >
             Get In Touch
           </Button>

@@ -1,5 +1,6 @@
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
+import { motion } from "framer-motion";
 
 export const AboutSection = () => {
   const { ref, isVisible } = useScrollAnimation(0.2);
@@ -8,22 +9,27 @@ export const AboutSection = () => {
     <section
       id="about"
       ref={ref as React.RefObject<HTMLElement>}
-      className={cn(
-        "py-32 px-6 opacity-0 transition-all duration-1000",
-        isVisible && "opacity-100 animate-fade-in-up"
-      )}
+      className="py-32 px-6"
     >
       <div className="max-w-3xl mx-auto">
-        <h2
+        <motion.h2
           className="font-heading font-bold mb-8 text-center"
           style={{
             fontSize: "clamp(2rem, 4vw, 3rem)",
           }}
+          initial={{ opacity: 0, y: -20 }}
+          animate={isVisible ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
+          transition={{ duration: 0.6 }}
         >
           About Me
-        </h2>
+        </motion.h2>
 
-        <div className="space-y-6 text-muted-foreground leading-relaxed">
+        <motion.div
+          className="space-y-6 text-muted-foreground leading-relaxed"
+          initial={{ opacity: 0 }}
+          animate={isVisible ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+        >
           <p style={{ fontSize: "clamp(1rem, 1.5vw, 1.125rem)" }}>
             I'm a UI designer driven by the belief that great design is invisible—it
             simply works. My approach combines minimalist aesthetics with functional
@@ -46,7 +52,7 @@ export const AboutSection = () => {
               natural and refined.
             </p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </section>
   );

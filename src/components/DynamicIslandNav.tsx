@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 
 const navItems = [
   { label: "About", href: "#about" },
@@ -15,10 +16,11 @@ export const DynamicIslandNav = () => {
   const [activeSection, setActiveSection] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [userSelectedSection, setUserSelectedSection] = useState<string | null>(null);
 
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+      setIsMobile(window.innerWidth < 640);
     };
     
     checkMobile();
@@ -27,17 +29,36 @@ export const DynamicIslandNav = () => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 50);
 
-      // Determine active section
+      // If user recently selected a section, keep it active
+      if (userSelectedSection) {
+        return;
+      }
+
+      // Determine active section - check which section is most visible
       const sections = ["about", "work", "process", "contact"];
-      const current = sections.find(section => {
+      let maxVisibility = 0;
+      let currentSection = "";
+      
+      sections.forEach(section => {
         const element = document.getElementById(section);
         if (element) {
           const rect = element.getBoundingClientRect();
-          return rect.top <= 100 && rect.bottom >= 100;
+          // Calculate how much of the section is visible in the viewport
+          const visibleTop = Math.max(0, rect.top);
+          const visibleBottom = Math.min(window.innerHeight, rect.bottom);
+          const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+          
+          // If this section is more visible than the current one, update
+          if (visibleHeight > maxVisibility) {
+            maxVisibility = visibleHeight;
+            currentSection = section;
+          }
         }
-        return false;
       });
-      setActiveSection(current || "");
+      
+      if (currentSection) {
+        setActiveSection(currentSection);
+      }
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -45,122 +66,175 @@ export const DynamicIslandNav = () => {
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("resize", checkMobile);
     };
-  }, []);
+  }, [userSelectedSection]);
 
   const handleNavClick = (href: string) => {
     setMobileMenuOpen(false);
-    const element = document.querySelector(href);
-    element?.scrollIntoView({ behavior: "smooth" });
+    
+    // Remove # from href if present
+    const targetId = href.startsWith('#') ? href.slice(1) : href;
+    
+    // Immediately set active section and mark as user-selected
+    setActiveSection(targetId);
+    setUserSelectedSection(targetId);
+    
+    // Clear user selection after 1.5 seconds to allow auto-detection again
+    setTimeout(() => {
+      setUserSelectedSection(null);
+    }, 1500);
+    
+    // Add a small delay to ensure DOM is ready
+    setTimeout(() => {
+      const element = document.getElementById(targetId);
+      
+      if (element) {
+        const offset = 100; // Account for fixed nav height
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - offset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: "smooth"
+        });
+      } else {
+        console.error(`Element with id "${targetId}" not found`);
+        // Fallback: try with original href
+        const fallbackElement = document.querySelector(href);
+        if (fallbackElement) {
+          const offset = 100;
+          const elementPosition = fallbackElement.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - offset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+          });
+        }
+      }
+    }, 50); // 50ms delay
   };
 
   return (
     <>
-      <nav
-        className={cn(
-          "fixed top-6 left-1/2 -translate-x-1/2 z-50 transition-all duration-300 ease-out",
-          scrolled && "scale-95 opacity-90"
-        )}
+      <motion.nav
+        className="fixed top-6 left-0 right-0 z-50 flex justify-center"
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <div className="relative">
           {/* Glass-morphism pill with neon green border */}
-          <div
-            className="flex items-center gap-8 px-6 md:px-8 py-4 rounded-full backdrop-blur-xl bg-black/55 border border-white/12"
+          <motion.div
+            className="flex flex-col gap-0 rounded-3xl backdrop-blur-2xl bg-black/40 border border-white/20"
             style={{
               boxShadow: "0 0 20px rgba(143, 255, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.4)",
+              backdropFilter: "blur(16px)",
             }}
           >
-            {/* Logo/Name */}
-            <a
-              href="#hero"
-              onClick={(e) => {
-                e.preventDefault();
-                handleNavClick("#hero");
-              }}
-              className="font-heading font-bold text-lg tracking-tight text-foreground hover:text-primary transition-colors duration-200"
-            >
-              Portfolio
-            </a>
-
-            {/* Desktop Navigation Items */}
-            <div className="hidden md:flex items-center gap-6">
-              {navItems.map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick(item.href);
-                  }}
-                  className={cn(
-                    "relative font-medium text-sm tracking-wide transition-all duration-200",
-                    "hover:scale-105 hover:text-primary",
-                    activeSection === item.href.slice(1)
-                      ? "text-primary"
-                      : "text-foreground/90"
-                  )}
-                  style={{
-                    letterSpacing: "0.05em",
-                  }}
-                >
-                  {item.label}
-                  {activeSection === item.href.slice(1) && (
-                    <div
-                      className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
-                      style={{
-                        boxShadow: "0 0 8px rgba(143, 255, 0, 0.6)",
-                      }}
-                    />
-                  )}
-                </a>
-              ))}
-            </div>
-
-            {/* Mobile Hamburger */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden text-foreground hover:text-primary hover:bg-transparent"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
-          </div>
-        </div>
-      </nav>
-
-      {/* Mobile Menu Overlay */}
-      {isMobile && (
-        <div
-          className={cn(
-            "fixed inset-0 z-40 bg-black/90 backdrop-blur-xl transition-all duration-300",
-            mobileMenuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          )}
-        >
-          <div className="flex flex-col items-center justify-center min-h-screen gap-8 px-6">
-            {navItems.map((item, index) => (
+            {/* Top Navigation Bar */}
+            <div className="flex items-center justify-between gap-4 sm:gap-8 px-8 sm:px-16 md:px-20 py-4 rounded-t-3xl border-b border-white/10">
+              {/* Logo/Name */}
               <a
-                key={item.label}
-                href={item.href}
+                href="#hero"
                 onClick={(e) => {
                   e.preventDefault();
-                  handleNavClick(item.href);
+                  handleNavClick("#hero");
                 }}
-                className={cn(
-                  "text-3xl font-heading font-semibold transition-all duration-300",
-                  "hover:text-primary hover:scale-110",
-                  activeSection === item.href.slice(1) ? "text-primary" : "text-foreground",
-                  mobileMenuOpen && "animate-fade-in"
-                )}
-                style={{
-                  animationDelay: `${index * 100}ms`,
-                }}
+                className="font-heading font-bold text-base sm:text-lg tracking-tight text-foreground hover:text-primary transition-colors whitespace-nowrap"
               >
-                {item.label}
+                Portfolio
               </a>
-            ))}
-          </div>
+
+              {/* Mobile Hamburger */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="sm:hidden text-foreground hover:text-primary hover:bg-transparent flex-shrink-0"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </Button>
+
+              {/* Desktop Navigation */}
+              <motion.div
+                className="hidden sm:flex items-center gap-8 ml-auto"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+              >
+                {navItems.map((item) => (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
+                    className={cn(
+                      "relative font-medium text-sm tracking-wide transition-all duration-200",
+                      "hover:scale-105 hover:text-primary",
+                      activeSection === item.href.slice(1)
+                        ? "text-primary"
+                        : "text-foreground"
+                    )}
+                    style={{
+                      letterSpacing: "0.05em",
+                    }}
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    {item.label}
+                    {activeSection === item.href.slice(1) && (
+                      <motion.div
+                        className="absolute -bottom-1 left-0 right-0 h-0.5 bg-primary rounded-full"
+                        style={{
+                          boxShadow: "0 0 8px rgba(143, 255, 0, 0.6)",
+                        }}
+                        layoutId="underline"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.1 }}
+                      />
+                    )}
+                  </motion.a>
+                ))}
+              </motion.div>
+            </div>
+
+            {/* Mobile Menu - Extends Below */}
+            {isMobile && mobileMenuOpen && (
+              <motion.div
+                className="flex flex-col gap-3 px-6 py-4 border-t border-white/10 rounded-b-3xl"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                {navItems.map((item, index) => (
+                  <motion.a
+                    key={item.label}
+                    href={item.href}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleNavClick(item.href);
+                    }}
+                    className={cn(
+                      "text-lg font-heading font-semibold transition-all duration-300 py-2",
+                      "hover:text-primary hover:scale-105",
+                      activeSection === item.href.slice(1) ? "text-primary" : "text-foreground"
+                    )}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                  >
+                    {item.label}
+                  </motion.a>
+                ))}
+              </motion.div>
+            )}
+          </motion.div>
         </div>
-      )}
+      </motion.nav>
     </>
   );
 };
