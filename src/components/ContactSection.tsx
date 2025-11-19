@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/lib/supabaseClient";
 import { z } from "zod";
 import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
@@ -35,15 +36,35 @@ export const ContactSection = () => {
   });
 
   const onSubmit = async (values: ContactFormValues) => {
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const { error } = await supabase.from("contact_messages").insert({
+        name: values.name,
+        email: values.email,
+        message: values.message,
+      });
 
-    toast({
-      title: "Message sent!",
-      description: "Thank you for reaching out. I'll get back to you soon.",
-    });
+      if (error) {
+        toast({
+          title: "送出失敗",
+          description: "系統發生錯誤，請稍後再試一次。",
+          variant: "destructive",
+        });
+        return;
+      }
 
-    reset();
+      toast({
+        title: "已送出訊息！",
+        description: "感謝你的來信，我會盡快回覆。",
+      });
+
+      reset();
+    } catch (err) {
+      toast({
+        title: "送出失敗",
+        description: "無法連線到伺服器，請檢查網路或稍後再試。",
+        variant: "destructive",
+      });
+    }
   };
 
   return (
